@@ -45,7 +45,7 @@ steps:
         - linux/amd64
         - linux/arm64
       tags:
-        - ${DRONE_TAG}
+        - latest
     depends_on:
       - build-image-amd64
       - build-image
@@ -54,5 +54,6 @@ trigger:
     - main
   event:
     - tag
+    - manual
 node_selector:
   kubernetes.io/arch: "amd64"
