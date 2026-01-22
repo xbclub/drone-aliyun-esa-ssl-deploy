@@ -49,11 +49,5 @@ steps:
     depends_on:
       - build-image-amd64
       - build-image
-trigger:
-  branch:
-    - main
-  event:
-    - tag
-    - manual
 node_selector:
   kubernetes.io/arch: "amd64"
