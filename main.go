@@ -28,12 +28,13 @@ type Plugin struct {
 	client          *esa20240910.Client
 }
 
-func (p *Plugin) UploadSSL() error {
+func (p *Plugin) UploadSSL(id string) error {
 	request := &esa20240910.SetCertificateRequest{
 		Type:        tea.String(p.CertType),
 		Certificate: tea.String(p.PublicKey),
 		PrivateKey:  tea.String(p.PrivateKey),
 		SiteId:      tea.Int64(p.SiteId),
+		Id:          tea.String(id),
 	}
 	runtime := &util.RuntimeOptions{}
 
@@ -45,17 +46,18 @@ func (p *Plugin) UploadSSL() error {
 	logx.Infof("Certificate uploaded successfully: %s", tea.StringValue(resp.Body.RequestId))
 	return nil
 }
-func (p *Plugin) DeleteSSl(id string) error {
-	request := &esa20240910.DeleteCertificateRequest{
-		SiteId: tea.Int64(p.SiteId),
-		Id:     tea.String(id),
-	}
-	runtime := &util.RuntimeOptions{}
 
-	_, err := p.client.DeleteCertificateWithOptions(request, runtime)
-
-	return err
-}
+//	func (p *Plugin) DeleteSSl(id string) error {
+//		request := &esa20240910.DeleteCertificateRequest{
+//			SiteId: tea.Int64(p.SiteId),
+//			Id:     tea.String(id),
+//		}
+//		runtime := &util.RuntimeOptions{}
+//
+//		_, err := p.client.DeleteCertificateWithOptions(request, runtime)
+//
+//		return err
+//	}
 func (p *Plugin) GetSSLList(name string) ([]*esa20240910.ListCertificatesResponseBodyResult, error) {
 	request := &esa20240910.ListCertificatesRequest{
 		SiteId:  tea.Int64(p.SiteId),
@@ -180,19 +182,22 @@ func main() {
 		logx.Errorf("create client failed: %v", err)
 		return
 	}
-	list, err := plugin.GetSSLList("domain")
+	list, err := plugin.GetSSLList(domain)
 	if err != nil {
 		logx.Errorf("get ssl list failed: %v", err)
 		return
 	}
+	id := ""
 	if len(list) > 0 {
-		err = plugin.DeleteSSl(tea.StringValue(list[0].Id))
-		if err != nil {
-			logx.Errorf("delete ssl failed: %v", err)
-			return
-		}
+		//err = plugin.DeleteSSl(tea.StringValue(list[0].Id))
+		//if err != nil {
+		//	logx.Errorf("delete ssl failed: %v", err)
+		//	return
+		//}
+		id = *list[0].Id
 	}
-	if err := plugin.UploadSSL(); err != nil {
+	logx.Infof("list: %v", list)
+	if err := plugin.UploadSSL(id); err != nil {
 		log.Fatalf("upload certificate failed: %v", err)
 	}
 }

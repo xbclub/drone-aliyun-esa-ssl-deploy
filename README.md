@@ -11,10 +11,6 @@ Upload SSL certificates to Aliyun ESA using the ESA API.
 - `PLUGIN_ENDPOINT`: ESA endpoint. Default: `esa.cn-hangzhou.aliyuncs.com`.
 - `PLUGIN_CERT_TYPE`: Certificate type. Default: `upload`.
 
-## Warning
-
-**DANGER:** Uploading a certificate will remove any existing SSL certificate that matches the same domain name.
-
 ## Usage
 
 ```bash
